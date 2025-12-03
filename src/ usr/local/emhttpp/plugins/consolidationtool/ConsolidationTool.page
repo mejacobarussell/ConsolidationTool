@@ -1,0 +1,111 @@
+Menu="Utilities"
+Title="User Share Consolidation Tool"
+Icon="fa-question"
+---
+[cite_start]Menu="Utilities" [cite: 1]
+[cite_start]Title="User Share Consolidation Tool" [cite: 1]
+Icon="fa-search"
+---
+<?php
+// Load required Unraid helper functions for plugin development
+require_once "/usr/local/emhttp/plugins/dynamix/include/Helpers.php";
+require_once "/usr/local/emhttp/plugins/dynamix/include/UnraidWeb.php"; 
+[cite_start]require_once "/usr/local/emhttp/plugins/dynamix/include/Wrappers.php"; [cite: 3]
+
+// --- Configuration ---
+$PLUGIN_NAME = "ConsolidationTool";
+// Define the path to your deployed shell script
+$SCRIPT_PATH = "/usr/local/emhttp/plugins/{$PLUGIN_NAME}/colsold8.sh";
+$LOG_FILE = "/var/log/consolidation.log";
+// ---------------------
+
+/**
+ * Starts the long-running consolidation script in the background.
+ * @param string $folder The share component to consolidate (e.g., "TVSHOWS/The Office")
+ */
+function start_consolidation($folder) {
+    global $SCRIPT_PATH, $LOG_FILE, $PLUGIN_NAME;
+    
+    // SECURITY: MUST escape the user-provided folder name before passing it to the shell
+    $safe_folder = escapeshellarg($folder);
+
+    // Command structure: nohup <script> --consolidate <folder> > <log_file> 2>&1 &
+    $command = "nohup {$SCRIPT_PATH} --consolidate {$safe_folder} > {$LOG_FILE} 2>&1 &";
+    
+    // Execute the command in the background
+    exec($command);
+    
+    // Notify the Unraid GUI that the process has started
+    notify("normal", $PLUGIN_NAME, "Consolidation of {$folder} started. Check the log below for status.", $PLUGIN_NAME);
+}
+
+// --- Handle Form Submission (Consolidation button clicked) ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['consolidate_folder'])) {
+    start_consolidation($_POST['consolidate_folder']);
+    
+    // Redirect to prevent accidental double submission
+    header("Location: /Main/{$PLUGIN_NAME}"); 
+    exit;
+}
+
+// --- Retrieve list of split folders from the script ---
+// Call the shell script in --find-splits mode
+$raw_output = shell_exec("{$SCRIPT_PATH} --find-splits 2>/dev/null");
+// Explode the output (which is one folder path per line) into an array
+$folders = array_filter(explode("\n", trim($raw_output)));
+
+// --- Read the last consolidation log for display ---
+$log_content = @file_get_contents($LOG_FILE) ?: "No previous consolidation log found.";
+?>
+
+<div class="sContainer">
+    <div class="sForm">
+        <h2 class="sTitle">User Share Consolidation Tool</h2>
+        <p class="sDescription">This tool finds folders that are split across multiple disks and consolidates all fragments onto the single disk with the most available space, while respecting the minimum free space safety margin.</p>
+        
+        <hr>
+
+        <h3>📁 Split Folders Found</h3>
+        
+        <?php if (!empty($folders)): ?>
+            <form method="POST">
+                <table class="sTable">
+                    <thead>
+                        <tr>
+                            <th>Share Component Path</th>
+                            <th style="width: 150px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($folders as $folder): ?>
+                            <tr>
+                                <td><code>/mnt/user/<?= htmlspecialchars($folder) ?></code></td>
+                                <td>
+                                    <button type="submit" 
+                                            name="consolidate_folder" 
+                                            value="<?= htmlspecialchars($folder) ?>"
+                                            class="sButton sButton_action" 
+                                            onclick="return confirm('WARNING: Consolidating <?= htmlspecialchars($folder) ?> will start a long-running file move operation. Are you sure you want to proceed?');">
+                                        Consolidate
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <p class="sNote">Found **<?= count($folders) ?>** fragmented share components ready for consolidation.</p>
+            </form>
+        <?php else: ?>
+            <div class="sBox sBox_success">
+                <p>✅ **Success!** Your array is clean. No fragmented folders were found.</p>
+            </div>
+        <?php endif; ?>
+        
+        <hr>
+
+        <h3>📜 Last Consolidation Status</h3>
+        <p class="sNote">This log updates when consolidation starts and stops. You may need to refresh the page to see the latest output.</p>
+        <pre class="sLog"><?= htmlspecialchars($log_content) ?></pre>
+
+    </div>
+</div>
