@@ -1,14 +1,30 @@
 # 1. Header and Metadata
 PLUGIN_NAME="ConsolidationTool"
 # ... other variables ...
-# MD5_SUM line here...
+# MD5_SUM="<32-character-hash> ConsolidationTool.plg"
 
 # 2. Installation/Removal Functions
+
 install_plugin() {
-    # Create directories, extract files, and configure
+    # Create the main plugin directory
     mkdir -p /usr/local/emhttp/plugins/ConsolidationTool
-    tar -xf $MD5_FILE -C /usr/local/emhttp/plugins
-    # ... more commands ...
+
+    # --- NEW: Download and Extract the ZIP file ---
+    # This block downloads the zip to /tmp/plugins/ConsolidationTool.zip
+    # and then extracts it into /usr/local/emhttp/plugins
+    <FILE Name="/tmp/plugins/ConsolidationTool.zip" Run="unzip -o /tmp/plugins/ConsolidationTool.zip -d /usr/local/emhttp/plugins">
+        <URL>https://github.com/mejacobarussell/ConsolidationTool/archive/refs/heads/main.zip</URL>
+        <MD5>3a586c21f9f406ec6ed2e28b32e40c46</MD5>
+    </FILE>
+    # ---------------------------------------------
+
+    # Note: The old 'tar -xf $MD5_FILE -C /usr/local/emhttp/plugins' is REMOVED,
+    # as the extraction is now done by the <FILE> tag's Run command.
+
+    # ... add commands here to set file permissions, start services, etc. ...
+    
+    # This line is often needed to clean up the ZIP file after extraction
+    rm /tmp/plugins/ConsolidationTool.zip 
 }
 
 remove_plugin() {
@@ -28,8 +44,5 @@ case $1 in
     # ...
 esac
 
-# 3. File Payload Marker
-__EOF__
-
-# ... Zipped tarball containing the plugin files goes here ...
-# This content is typically generated using a helper script.
+# 3. NO FILE PAYLOAD MARKER
+# The __EOF__ marker and zipped payload are removed since files are downloaded from GitHub.
