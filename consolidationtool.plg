@@ -1,7 +1,7 @@
 # 1. Header and Metadata
 PLUGIN_NAME="ConsolidationTool"
 # ... other variables ...
-# MD5_SUM="<32-character-hash> ConsolidationTool.plg"
+# MD5_SUM="consolidationtool.plg ConsolidationTool.plg"
 
 # 2. Installation/Removal Functions
 
