@@ -14,7 +14,7 @@
     
     # 1. Header and Metadata (Variables are now defined via XML tags above, but some may remain for script use)
 PLUGIN_NAME="ConsolidationTool"
-# MD5_SUM="<Recalculate this for the whole new file> consolidationtool.plg"
+# MD5_SUM="<eb4066a142a1b50189843a289ecd6401> consolidationtool.plg"
 
 # 2. Installation/Removal Functions
 
