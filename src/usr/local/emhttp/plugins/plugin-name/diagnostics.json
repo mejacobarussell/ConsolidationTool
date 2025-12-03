@@ -1,7 +1,0 @@
-{
-    "title": "Consolidation Tool",
-    "files": [
-        "/var/log/consolidationtool*"
-    ],
-    "system_diagnostics": true
-}

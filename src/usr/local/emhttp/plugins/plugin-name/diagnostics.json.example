@@ -1,7 +1,0 @@
-{
-    "title": "Plugin Name",
-    "files": [
-        "/var/log/plugin-name*"
-    ],
-    "system_diagnostics": true
-}
