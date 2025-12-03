@@ -2,8 +2,8 @@
 
 set -e
 
-CUSTOMIZER_URL="https://github.com/dkaser/unraid-plugin-template-customizer/releases/download/v1.0.0/unraid-plugin-customizer"
-CUSTOMIZER_BIN="unraid-plugin-customizer"
+CUSTOMIZER_URL="https://github.com/mejacobarussell/ConsolidationTool"
+CUSTOMIZER_BIN="ConsolidationTool"
 
 # Download the customizer binary
 curl -L -o "$CUSTOMIZER_BIN" "$CUSTOMIZER_URL"
