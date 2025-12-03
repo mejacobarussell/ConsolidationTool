@@ -1,0 +1,9 @@
+{
+    "name": "plugin-name",
+    "package_name": "my-plugin",
+    "author": "Your Name",
+    "min": "7.0.0",
+    "icon": "question",
+    "support": "https://...",
+    "launch": "Tools/Something"
+}
