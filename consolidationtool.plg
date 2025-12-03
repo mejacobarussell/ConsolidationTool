@@ -1,38 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PLUGIN>
-    <ID>CONSOLIDATIONTOOL</ID>
-    <NAME>unRiad user share consolidation tool</NAME>
-    <VERSION>2025.12.3.1</VERSION>
-    ```
-
-
-# 1. Header and Metadata
-PLUGIN_NAME="ConsolidationTool"
-# ... other variables ...
-# MD5_SUM="consolidationtool.plg ConsolidationTool.plg"
-
-# 2. Installation/Removal Functions
-
-install_plugin() {
-    # Create the main plugin directory
-    mkdir -p /usr/local/emhttp/plugins/ConsolidationTool
-
-    # --- NEW: Download and Extract the ZIP file ---
-    # This block downloads the zip to /tmp/plugins/ConsolidationTool.zip
-    # and then extracts it into /usr/local/emhttp/plugins
+    <ID>ConsolidationTool</ID>
+    <NAME>Consolidation Tool</NAME>
+    <DESCRIPTION>Your plugin description here.</DESCRIPTION>
+    <VERSION>1.0.0</VERSION>
+    <AUTHOR>mejacobarussell</AUTHOR>
+    <MINVER>6.9.0</MINVER>
+    <CATEGORY>Tools</CATEGORY>
     <FILE Name="/tmp/plugins/ConsolidationTool.zip" Run="unzip -o /tmp/plugins/ConsolidationTool.zip -d /usr/local/emhttp/plugins">
         <URL>https://github.com/mejacobarussell/ConsolidationTool/archive/refs/heads/main.zip</URL>
         <MD5>3a586c21f9f406ec6ed2e28b32e40c46</MD5>
     </FILE>
-    # ---------------------------------------------
+    
+    # 1. Header and Metadata (Variables are now defined via XML tags above, but some may remain for script use)
+PLUGIN_NAME="ConsolidationTool"
+# MD5_SUM="<Recalculate this for the whole new file> consolidationtool.plg"
 
-    # Note: The old 'tar -xf $MD5_FILE -C /usr/local/emhttp/plugins' is REMOVED,
-    # as the extraction is now done by the <FILE> tag's Run command.
+# 2. Installation/Removal Functions
 
-    # ... add commands here to set file permissions, start services, etc. ...
+install_plugin() {
+    # The ZIP file has already been downloaded, verified, and extracted by the <FILE> tag's 'Run' command
+    
+    # Create the main plugin directory (if not created by extraction, though extraction should place files inside it)
+    mkdir -p /usr/local/emhttp/plugins/ConsolidationTool
     
     # This line is often needed to clean up the ZIP file after extraction
     rm /tmp/plugins/ConsolidationTool.zip 
+    
+    # Final step to inform Unraid GUI of a successful installation (may require a file touch or restart command)
 }
 
 remove_plugin() {
@@ -52,5 +47,4 @@ case $1 in
     # ...
 esac
 
-# 3. NO FILE PAYLOAD MARKER
-# The __EOF__ marker and zipped payload are removed since files are downloaded from GitHub.
+</PLUGIN>
